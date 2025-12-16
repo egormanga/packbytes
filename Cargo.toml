@@ -12,7 +12,9 @@ readme = "README.md"
 
 [dependencies]
 packbytes-derive = { path = "packbytes-derive", version = "0.1", optional = true }
+tokio = { version = "1", optional = true, features = ["io-util"] }
 
 [features]
 default = ["packbytes-derive", "std"]
 std = []
+async = ["dep:tokio"]

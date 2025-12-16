@@ -186,6 +186,15 @@ pub trait ToBytes: Sized {
     fn write_packed<W: std::io::Write>(self, writer: &mut W) -> std::io::Result<()> {
         writer.write_all(self.to_bytes().as_ref())
     }
+
+    /// Write the value of this type to a writer in preferred byte order, set by the associated
+    /// constant `PREFERS_LE`.
+    #[allow(async_fn_in_trait)]
+    #[cfg(feature = "async")]
+    #[inline]
+    async fn write_packed_async<W: tokio::io::AsyncWriteExt + std::marker::Unpin>(self, writer: &mut W) -> std::io::Result<()> {
+        writer.write_all(self.to_bytes().as_ref()).await
+    }
 }
 
 impl<B: ByteArray, T: FromBytes<Bytes = B>> TryFromBytes for T {
