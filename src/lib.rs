@@ -94,6 +94,17 @@ pub trait FromBytes: Sized {
         reader.read_exact(bytes.as_mut())?;
         Ok(Self::from_bytes(bytes))
     }
+
+    /// Read a byte representation of this type in the preferred byte order (set in the associated
+    /// constant `PREFERS_LE`) and create a value of this type from it.
+    #[allow(async_fn_in_trait)]
+    #[cfg(feature = "async")]
+    #[inline]
+    async fn read_packed_async<R: tokio::io::AsyncReadExt + std::marker::Unpin>(reader: &mut R) -> std::io::Result<Self> {
+        let mut bytes = Self::Bytes::zeroed();
+        reader.read_exact(bytes.as_mut()).await?;
+        Ok(Self::from_bytes(bytes))
+    }
 }
 
 /// Try to create a value from its representation as a packed stack byte array of a fixed size.
